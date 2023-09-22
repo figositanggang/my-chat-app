@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:my_chat_app/firebase/firebase_authentication_helper.dart';
+import 'package:my_chat_app/main.dart';
 import 'package:my_chat_app/main_page.dart';
+import 'package:my_chat_app/resources/my_theme.dart';
 import 'package:my_chat_app/screen/register_screen.dart';
 import 'package:my_chat_app/widgets/my_text_button.dart';
 import 'package:my_chat_app/widgets/my_text_field.dart';
@@ -56,12 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
           .showSnackBar(SnackBar(content: Text("Login Berhasil")));
 
       try {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MainPage(),
-            ),
-            (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, "home", (route) => false);
       } catch (e) {}
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res)));
@@ -71,6 +68,17 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                context, "/", (route) => false),
+            icon: Icon(Icons.close),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: SizedBox(
@@ -80,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 // Login Text
                 Text(
-                  "Login",
+                  "Masuk",
                   style: TextStyle(fontSize: 30),
                 ),
                 SizedBox(height: 30),
@@ -123,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: MyButton(
-                            tooltip: "Login",
+                            tooltip: "Masuk",
                             child: loading
                                 ? Padding(
                                     padding:
@@ -132,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       color: Colors.white,
                                     ),
                                   )
-                                : Text("Login"),
+                                : Text("Masuk"),
                             padding: EdgeInsets.symmetric(vertical: 25),
                             onPressed: loading
                                 ? null
@@ -146,22 +154,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(height: 5),
 
                         // Belum Punya Akun
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Tooltip(
-                            message: "Buat Akun",
-                            child: TextButton(
-                              child: Text("Buat Akun"),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => RegisterScreen(),
-                                  ),
-                                );
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text("Belum punya akun?"),
+                            SizedBox(width: 5),
+                            InkWell(
+                              child: Text(
+                                "Buat Akun",
+                                style: TextStyle(color: lightBlue),
+                              ),
+                              onTap: () {
+                                Navigator.pushNamed(context, "register");
                               },
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),

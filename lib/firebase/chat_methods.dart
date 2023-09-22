@@ -14,13 +14,15 @@ class ChatMethods {
     String chatId1 = "${currentUserId}-${otherId}";
     String chatId2 = "${otherId}-${currentUserId}";
 
-    print("ID1: ${chatId1}");
-    print("ID2: ${chatId2}");
-
     DocumentSnapshot<Map<String, dynamic>> chatSnap1 =
         await _firebaseFirestore.collection("chats").doc(chatId1).get();
     DocumentSnapshot<Map<String, dynamic>> chatSnap2 =
         await _firebaseFirestore.collection("chats").doc(chatId2).get();
+
+    DateTime now = DateTime.now();
+
+    String date = "${now.year}-${now.month}-${now.day}";
+    String time = "${now.hour}:${now.minute}";
 
     if (chatSnap1.data() == null) {
       try {
@@ -29,14 +31,13 @@ class ChatMethods {
                 messages: [
                   MessageModel(
                     message: message,
-                    timestamp: Timestamp.fromDate(DateTime.now()),
                     senderId: currentUserId,
+                    date: date,
+                    time: time,
                   ).toMap(),
                 ],
               ).toMap(),
             );
-
-        print("Berhasil1");
       } catch (e) {}
     }
 
@@ -47,8 +48,9 @@ class ChatMethods {
                 messages: [
                   MessageModel(
                     message: message,
-                    timestamp: Timestamp.fromDate(DateTime.now()),
                     senderId: currentUserId,
+                    date: date,
+                    time: time,
                   ).toMap(),
                 ],
               ).toMap(),
@@ -67,8 +69,9 @@ class ChatMethods {
 
       messages.add(MessageModel(
         message: message,
-        timestamp: Timestamp.fromDate(DateTime.now()),
         senderId: currentUserId,
+        date: date,
+        time: time,
       ).toMap());
       await _firebaseFirestore
           .collection("chats")

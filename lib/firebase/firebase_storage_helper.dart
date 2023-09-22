@@ -22,7 +22,7 @@ class FirebaseStorageHelper {
       webImage = await picker.pickImage(source: ImageSource.gallery);
 
       if (webImage != null) {
-        String imageName = "${currentUserId}-profilePicture-${webImage.name}";
+        String imageName = "${currentUserId}-profilePicture";
         ref = FirebaseStorage.instance.ref("Profile pictures").child(imageName);
 
         uploadImage(

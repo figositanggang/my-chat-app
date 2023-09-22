@@ -1,12 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:my_chat_app/resources/my_theme.dart';
 
 class MyButton extends StatelessWidget {
   final Function()? onPressed;
   final Widget child;
   final String tooltip;
   var padding;
+  var bgColor;
+  var border;
 
   MyButton({
     Key? key,
@@ -14,6 +17,8 @@ class MyButton extends StatelessWidget {
     required this.child,
     required this.tooltip,
     EdgeInsetsGeometry? this.padding,
+    Color? this.bgColor,
+    OutlinedBorder? this.border,
   }) : super(key: key);
 
   @override
@@ -32,9 +37,12 @@ class MyButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         child: child,
-        style: padding != null
-            ? ElevatedButton.styleFrom(padding: padding)
-            : ElevatedButton.styleFrom(),
+        style: ElevatedButton.styleFrom(
+          padding: padding ?? EdgeInsets.all(10),
+          backgroundColor: bgColor ?? blue,
+          shape:
+              border ?? RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        ),
       ),
     );
   }

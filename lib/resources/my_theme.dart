@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Color darkBlue = Color.fromARGB(255, 4, 14, 21);
-Color blue = Color.fromARGB(255, 13, 61, 166);
-Color lightBlue = Color.fromARGB(255, 55, 165, 255);
-Color scaffoldBackgroundColor = Color.fromARGB(255, 6, 22, 36);
+Color darkBlue = Color.fromARGB(255, 12, 18, 23);
+Color blue = Color.fromARGB(255, 8, 106, 163);
+Color lightBlue = Color.fromARGB(255, 0, 140, 255);
+Color scaffoldBackgroundColor = Color.fromARGB(255, 9, 15, 19);
 
 ThemeData darkTheme = ThemeData(
   useMaterial3: true,
@@ -14,7 +14,7 @@ ThemeData darkTheme = ThemeData(
 
   // App Bar Theme
   appBarTheme: AppBarTheme(
-    backgroundColor: lightBlue.withOpacity(.1),
+    backgroundColor: blue.withOpacity(.1),
     foregroundColor: Colors.white,
   ),
 
@@ -29,8 +29,10 @@ ThemeData darkTheme = ThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: blue,
       foregroundColor: Colors.white,
-      disabledBackgroundColor: blue,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+        side: BorderSide(color: Colors.white),
+      ),
     ),
   ),
 

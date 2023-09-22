@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 import 'package:my_chat_app/models/user_model.dart';
 import 'package:my_chat_app/screen/chatting_screen.dart';
-import 'package:my_chat_app/screen/profile_screen.dart';
-import 'package:my_chat_app/screen/start_chat_screen.dart';
+
 import 'package:my_chat_app/widgets/chat_list_tile.dart';
 import 'package:my_chat_app/widgets/my_loading.dart';
 
@@ -38,17 +38,32 @@ class _MainPageState extends State<MainPage> {
         actions: [
           IconButton(
             tooltip: "Pengaturan",
-            icon: CircleAvatar(
-              backgroundImage: NetworkImage(
-                  "https://upload.wikimedia.org/wikipedia/id/a/a3/JKT48_High_Tension_Cover.jpg"),
+            icon: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(currentUser.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Icon(Icons.circle_outlined);
+                } else {
+                  UserModel user = UserModel.fromSnap(snapshot.data!);
+
+                  if (snapshot.hasData && user.photoUrl.isNotEmpty) {
+                    return CircleAvatar(
+                      backgroundImage: NetworkImage(user.photoUrl),
+                    );
+                  } else {
+                    return CircleAvatar(
+                      backgroundImage: NetworkImage(
+                          "https://upload.wikimedia.org/wikipedia/id/a/a3/JKT48_High_Tension_Cover.jpg"),
+                    );
+                  }
+                }
+              },
             ),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(),
-                ),
-              );
+              Navigator.pushNamed(context, "profile");
             },
           ),
         ],
@@ -92,12 +107,7 @@ class _MainPageState extends State<MainPage> {
         child: Icon(Icons.add),
         tooltip: "Tambah teman",
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => StartChatScreen(),
-            ),
-          );
+          Navigator.pushNamed(context, "start-chat");
         },
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_chat_app/firebase/firebase_authentication_helper.dart';
+import 'package:my_chat_app/resources/my_theme.dart';
 import 'package:my_chat_app/widgets/my_text_button.dart';
 import 'package:my_chat_app/widgets/my_text_field.dart';
 
@@ -76,7 +77,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                context, "/", (route) => false),
             icon: Icon(Icons.close),
           ),
         ],
@@ -159,7 +161,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: MyButton(
-                            tooltip: "Register",
+                            tooltip: "Daftar",
                             child: loading
                                 ? Padding(
                                     padding:
@@ -168,7 +170,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Colors.white,
                                     ),
                                   )
-                                : Text("Register"),
+                                : Text("Daftar"),
                             padding: EdgeInsets.symmetric(vertical: 25),
                             onPressed: loading
                                 ? null
@@ -178,6 +180,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     }
                                   },
                           ),
+                        ),
+
+                        // Sudah Punya Akun
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text("Sudah punya akun?"),
+                            SizedBox(width: 5),
+                            InkWell(
+                              child: Text(
+                                "Masuk",
+                                style: TextStyle(color: lightBlue),
+                              ),
+                              onTap: () {
+                                Navigator.pushNamed(context, "login");
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),

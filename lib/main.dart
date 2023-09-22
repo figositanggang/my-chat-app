@@ -2,6 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:my_chat_app/firebase_options.dart';
+import 'package:my_chat_app/provider/chatting_screen_provider.dart';
+import 'package:my_chat_app/screen/profile%20screen/profile_screen.dart';
+import 'package:my_chat_app/screen/register_screen.dart';
+import 'package:my_chat_app/screen/start_chat_screen.dart';
+import 'package:my_chat_app/screen/welcome_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:my_chat_app/main_page.dart';
 import 'package:my_chat_app/provider/profile_screen_provider.dart';
@@ -17,6 +22,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (context) => ProfileScreenProvider()),
       ChangeNotifierProvider(create: (context) => StartChatScreenProvider()),
+      ChangeNotifierProvider(create: (context) => ChattingScreenProvider()),
     ],
     child: const MyApp(),
   ));
@@ -35,7 +41,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: AuthChanges(),
+      initialRoute: "/",
+      routes: {
+        "/": (context) => AuthChanges(),
+        "home": (context) => MainPage(),
+        "welcome": (context) => WelcomeScreen(),
+        "profile": (context) => ProfileScreen(),
+        "login": (context) => LoginScreen(),
+        "register": (context) => RegisterScreen(),
+        "start-chat": (context) => StartChatScreen(),
+      },
     );
   }
 }
@@ -51,7 +66,7 @@ class AuthChanges extends StatelessWidget {
         if (snapshot.hasData) {
           return MainPage();
         } else
-          return LoginScreen();
+          return WelcomeScreen();
       },
     );
   }

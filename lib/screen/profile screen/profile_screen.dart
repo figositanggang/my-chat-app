@@ -10,6 +10,7 @@ import 'package:my_chat_app/firebase/firebase_storage_helper.dart';
 import 'package:my_chat_app/models/user_model.dart';
 import 'package:my_chat_app/resources/my_theme.dart';
 import 'package:my_chat_app/screen/login_screen.dart';
+import 'package:my_chat_app/screen/welcome_screen.dart';
 import 'package:my_chat_app/widgets/my_text_button.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -46,22 +47,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Text("Ya"),
               tooltip: "Keluar",
               onPressed: () {
-                FirebaseAuthenticationHelper.signOut().then((value) async {
-                  await Future.delayed(Duration(seconds: 1));
+                FirebaseAuthenticationHelper.signOut().then(
+                  (value) async {
+                    await Future.delayed(Duration(seconds: 1));
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Berhasil Keluar"),
-                    ),
-                  );
-
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginScreen(),
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Berhasil Keluar"),
                       ),
-                      (route) => false);
-                });
+                    );
+
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, "welcome", (route) => false);
+                  },
+                );
               },
             ),
           ],
@@ -135,10 +134,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         // Banner
         AspectRatio(
-          aspectRatio: NetworkImage(
-                      "https://i.ytimg.com/vi/2otuSepwPvY/maxresdefault.jpg")
-                  .scale *
-              2,
+          aspectRatio: user.photoUrl.isNotEmpty
+              ? NetworkImage(user.photoUrl).scale * 2
+              : NetworkImage(
+                          "https://i.ytimg.com/vi/2otuSepwPvY/maxresdefault.jpg")
+                      .scale *
+                  2,
           child: Stack(
             children: [
               Positioned.fill(
@@ -150,6 +151,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? user.photoUrl
                         : "https://i.ytimg.com/vi/2otuSepwPvY/maxresdefault.jpg",
                     fit: BoxFit.cover,
+                    color: Colors.black.withOpacity(.5),
+                    colorBlendMode: BlendMode.colorBurn,
                   ),
                   onTap: () {
                     Navigator.push(
@@ -182,10 +185,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     foregroundColor: Colors.white.withOpacity(.75),
                   ),
                   onPressed: () async {
-                    FirebaseStorageHelper.pickImage(
+                    showDialog(
+                      context: context,
+                      builder: (context) => Dialog(),
+                      barrierDismissible: false,
+                    );
+
+                    await FirebaseStorageHelper.pickImage(
                       platform: Theme.of(context).platform,
                       currentUserId: currentUser.uid,
                     );
+
+                    Navigator.pop(context);
                   },
                 ),
               ),

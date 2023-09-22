@@ -1,7 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:collection/collection.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:my_chat_app/provider/chatting_screen_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_chat_app/firebase/chat_methods.dart';
@@ -23,7 +26,7 @@ class ChattingScreen extends StatefulWidget {
 }
 
 class _ChattingScreenState extends State<ChattingScreen> {
-  late GlobalKey<FormState> key;
+  late GlobalKey<FormState> formKey;
   late Stream<DocumentSnapshot<Map<String, dynamic>>> getChat;
   late Future<UserModel?> getUser;
   late ProfileScreenProvider profileScreenProvider;
@@ -48,12 +51,18 @@ class _ChattingScreenState extends State<ChattingScreen> {
         .doc("${currentUser.uid}-${widget.otherUser.uid}")
         .snapshots();
 
-    key = GlobalKey<FormState>();
+    formKey = GlobalKey<FormState>();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("ID: ${currentUser.uid}-${widget.otherUser.uid}");
+    UserModel otherUser = widget.otherUser;
 
     return GestureDetector(
       onTap: () {
@@ -61,14 +70,20 @@ class _ChattingScreenState extends State<ChattingScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
           titleSpacing: 0,
-          title: Text(widget.otherUser.name),
+          title: Text(otherUser.name),
           actions: [
             InkWell(
               onTap: () {},
               child: CircleAvatar(
                 backgroundImage: NetworkImage(
-                    "https://i.ytimg.com/vi/2otuSepwPvY/maxresdefault.jpg"),
+                  otherUser.photoUrl.isEmpty
+                      ? "https://i.ytimg.com/vi/2otuSepwPvY/maxresdefault.jpg"
+                      : otherUser.photoUrl,
+                ),
               ),
             ),
             SizedBox(width: 5),
@@ -98,12 +113,49 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         ChatModel chat = ChatModel.fromSnap(snap);
                         List messages = chat.messages;
 
-                        Future.delayed(Duration(milliseconds: 500), () {
-                          scrollController.animateTo(
-                            scrollController.position.maxScrollExtent,
-                            duration: Duration(milliseconds: 100),
-                            curve: Curves.easeOut,
-                          );
+                        var group = groupBy(messages, (data) => data['date']);
+                        List<int> temp = [];
+                        List<int> indexes = [];
+                        group.values.forEach((element) {
+                          temp.add(element.length);
+                        });
+
+                        for (var i = 0; i < temp.length; i++) {
+                          for (var j = i + 1; j < temp.length; j++) {
+                            indexes.add(messages.length - temp[j] + 1);
+                          }
+                        }
+
+                        temp = temp.reversed.toList();
+
+                        for (var i = 0; i < temp.length; i++) {
+                          for (var j = i + 1; j < temp.length; j++) {
+                            indexes.add(messages.length - temp[i] - temp[j]);
+                          }
+                        }
+
+                        indexes = indexes.reversed.toList();
+
+                        for (var i = 0; i < indexes.length; i++) {
+                          int index = indexes[i];
+                          messages.insert(
+                              index,
+                              MessageModel(
+                                message: '',
+                                senderId: '',
+                                date: messages[index]['date'],
+                                time: '',
+                              ).toMap());
+                        }
+
+                        Future.delayed(Duration(milliseconds: 250), () {
+                          try {
+                            scrollController.animateTo(
+                              scrollController.position.maxScrollExtent,
+                              duration: Duration(milliseconds: 100),
+                              curve: Curves.easeInOut,
+                            );
+                          } catch (e) {}
                         });
 
                         return ListView.builder(
@@ -114,14 +166,38 @@ class _ChattingScreenState extends State<ChattingScreen> {
                             MessageModel message =
                                 MessageModel.fromSnap(messages[index]);
 
-                            return Align(
-                              alignment: message.senderId == currentUser.uid
-                                  ? Alignment.topRight
-                                  : Alignment.topLeft,
-                              child: ChatBubble(
-                                message: message,
-                              ),
-                            );
+                            // Return Chat
+                            if (message.senderId != '') {
+                              return Align(
+                                alignment: message.senderId == currentUser.uid
+                                    ? Alignment.topRight
+                                    : message.senderId == ''
+                                        ? Alignment.center
+                                        : Alignment.topLeft,
+                                child: ChatBubble(
+                                  currentUserId: currentUser.uid,
+                                  message: message,
+                                ),
+                              );
+                            }
+
+                            // Return Date
+                            else {
+                              return Container(
+                                alignment: Alignment.center,
+                                width: MediaQuery.of(context).size.width,
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                margin: EdgeInsets.only(bottom: 10),
+                                decoration: BoxDecoration(
+                                  color: blue.withOpacity(.1),
+                                ),
+                                child: Text(
+                                  message.date,
+                                  style: TextStyle(
+                                      color: Colors.white.withOpacity(.75)),
+                                ),
+                              );
+                            }
                           },
                         );
 
@@ -149,7 +225,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
               bottom: 0,
               left: 0,
               child: Form(
-                key: key,
+                key: formKey,
                 child: Container(
                   decoration: BoxDecoration(
                     color: scaffoldBackgroundColor,
@@ -160,12 +236,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       ),
                     ],
                   ),
-                  child: ChatForm(
-                    currentUser: currentUser,
-                    otherUserId: widget.otherUser.uid,
-                    scrollController: scrollController,
-                    formKey: key,
-                  ),
+                  child: ChatForm(context),
                   width: MediaQuery.of(context).size.width,
                   padding: EdgeInsets.only(bottom: 10),
                 ),
@@ -176,82 +247,52 @@ class _ChattingScreenState extends State<ChattingScreen> {
       ),
     );
   }
-}
 
-class ChatForm extends StatefulWidget {
-  final GlobalKey<FormState> formKey;
-  final User currentUser;
-  final String otherUserId;
-  final ScrollController scrollController;
+  Widget ChatForm(BuildContext context) {
+    final provider = Provider.of<ChattingScreenProvider>(context);
 
-  const ChatForm({
-    Key? key,
-    required this.formKey,
-    required this.currentUser,
-    required this.otherUserId,
-    required this.scrollController,
-  }) : super(key: key);
-
-  @override
-  State<ChatForm> createState() => _ChatFormState();
-}
-
-class _ChatFormState extends State<ChatForm> {
-  TextEditingController chatController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
     return TextFormField(
       obscureText: false,
       maxLines: null,
-      controller: chatController,
+      controller: provider.chatController,
       decoration: InputDecoration(
         // contentPadding: EdgeInsets.zero,
         hintText: "Ketik pesan",
         suffixIcon: Tooltip(
-          message: chatController.text.isNotEmpty ? "Kirim" : "",
+          message: provider.chatController.text.isNotEmpty ? "Kirim" : "",
           child: InkWell(
             child: Icon(
               Icons.send,
-              color: chatController.text.isNotEmpty ? lightBlue : Colors.grey,
+              color: lightBlue,
             ),
-            onTap: chatController.text.isNotEmpty
-                ? () async {
-                    if (widget.formKey.currentState!.validate()) {
-                      await ChatMethods.sendMessage(
-                        currentUserId: widget.currentUser.uid,
-                        otherId: widget.otherUserId,
-                        message: chatController.text,
-                      );
+            onTap: () async {
+              if (provider.chatController.text.isNotEmpty) {
+                if (formKey.currentState!.validate()) {
+                  String message = provider.chatController.text;
+                  provider.chatController.text = "";
 
-                      widget.scrollController.animateTo(
-                        widget.scrollController.position.maxScrollExtent,
+                  await ChatMethods.sendMessage(
+                    currentUserId: currentUser.uid,
+                    otherId: widget.otherUser.uid,
+                    message: message,
+                  ).then(
+                    (value) => Future.delayed(Duration(milliseconds: 250), () {
+                      scrollController.animateTo(
+                        scrollController.position.maxScrollExtent,
                         duration: Duration(milliseconds: 100),
-                        curve: Curves.easeOut,
+                        curve: Curves.easeInOut,
                       );
-
-                      chatController.text = "";
-
-                      setState(() {});
-                    }
-                  }
-                : null,
+                    }),
+                  );
+                }
+              }
+            },
           ),
         ),
         border: UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.white.withOpacity(.5)),
         ),
       ),
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "Tidak boleh kosong...";
-        }
-
-        return null;
-      },
-      onChanged: (value) {
-        setState(() {});
-      },
     );
   }
 }

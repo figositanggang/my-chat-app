@@ -58,11 +58,12 @@ class _ChatListTileState extends State<ChatListTile> {
 
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        "https://i.ytimg.com/vi/2otuSepwPvY/maxresdefault.jpg"),
+                    backgroundImage: NetworkImage(user.photoUrl.isEmpty
+                        ? "https://i.ytimg.com/vi/2otuSepwPvY/maxresdefault.jpg"
+                        : user.photoUrl),
                   ),
-                  title: Text(user.name),
-                  subtitle: Text(user.username),
+                  title: Text(user.username),
+                  subtitle: Text(user.name),
                   onTap: widget.onTap,
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 10, vertical: 5),

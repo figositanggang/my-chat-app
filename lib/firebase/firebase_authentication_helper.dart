@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:my_chat_app/firebase/chat_methods.dart';
 import 'package:my_chat_app/models/user_model.dart';
 
 class FirebaseAuthenticationHelper {
@@ -45,13 +44,13 @@ class FirebaseAuthenticationHelper {
           .collection("users")
           .doc(userCredential.user!.uid)
           .set(UserModel(
-                  uid: userCredential.user!.uid,
-                  email: email,
-                  username: username,
-                  name: name,
-                  password: password,
-                  photoUrl: photoUrl)
-              .toMap());
+            uid: userCredential.user!.uid,
+            email: email,
+            username: username,
+            name: name,
+            password: password,
+            photoUrl: photoUrl,
+          ).toMap());
 
       res = 'success';
     } on FirebaseAuthException catch (e) {
