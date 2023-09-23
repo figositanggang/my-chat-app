@@ -41,16 +41,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      initialRoute: "/",
-      routes: {
-        "/": (context) => AuthChanges(),
-        "home": (context) => MainPage(),
-        "welcome": (context) => WelcomeScreen(),
-        "profile": (context) => ProfileScreen(),
-        "login": (context) => LoginScreen(),
-        "register": (context) => RegisterScreen(),
-        "start-chat": (context) => StartChatScreen(),
-      },
+      home: AuthChanges(),
     );
   }
 }

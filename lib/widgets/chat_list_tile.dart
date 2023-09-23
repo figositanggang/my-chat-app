@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:my_chat_app/firebase/firebase_firestore_helper.dart';
 import 'package:my_chat_app/models/user_model.dart';

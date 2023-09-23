@@ -112,40 +112,33 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
                         ChatModel chat = ChatModel.fromSnap(snap);
                         List messages = chat.messages;
+                        int length = messages.length;
 
-                        var group = groupBy(messages, (data) => data['date']);
-                        List<int> temp = [];
-                        List<int> indexes = [];
-                        group.values.forEach((element) {
-                          temp.add(element.length);
-                        });
+                        for (var i = 0; i < length; i++) {
+                          if (i == 0) {
+                            messages.insert(
+                                0,
+                                MessageModel(
+                                  message: '',
+                                  senderId: '',
+                                  date: messages[0]['date'],
+                                  time: '',
+                                ).toMap());
+                          } else if (i > 0) {
+                            var msg1 = MessageModel.fromSnap(messages[i]);
+                            var msg2 = MessageModel.fromSnap(messages[i + 1]);
 
-                        for (var i = 0; i < temp.length; i++) {
-                          for (var j = i + 1; j < temp.length; j++) {
-                            indexes.add(messages.length - temp[j] + 1);
+                            if (msg1.date != msg2.date) {
+                              messages.insert(
+                                  i + 1,
+                                  MessageModel(
+                                    message: '',
+                                    senderId: '',
+                                    date: msg2.date,
+                                    time: '',
+                                  ).toMap());
+                            }
                           }
-                        }
-
-                        temp = temp.reversed.toList();
-
-                        for (var i = 0; i < temp.length; i++) {
-                          for (var j = i + 1; j < temp.length; j++) {
-                            indexes.add(messages.length - temp[i] - temp[j]);
-                          }
-                        }
-
-                        indexes = indexes.reversed.toList();
-
-                        for (var i = 0; i < indexes.length; i++) {
-                          int index = indexes[i];
-                          messages.insert(
-                              index,
-                              MessageModel(
-                                message: '',
-                                senderId: '',
-                                date: messages[index]['date'],
-                                time: '',
-                              ).toMap());
                         }
 
                         Future.delayed(Duration(milliseconds: 250), () {

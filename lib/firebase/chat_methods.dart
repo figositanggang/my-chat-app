@@ -24,6 +24,7 @@ class ChatMethods {
     String date = "${now.year}-${now.month}-${now.day}";
     String time = "${now.hour}:${now.minute}";
 
+    // Chat Kosong
     if (chatSnap1.data() == null) {
       try {
         await _firebaseFirestore.collection("chats").doc(chatId1).set(
@@ -41,6 +42,7 @@ class ChatMethods {
       } catch (e) {}
     }
 
+    // Chat Kosong
     if (chatSnap2.data() == null) {
       try {
         await _firebaseFirestore.collection("chats").doc(chatId2).set(
@@ -73,11 +75,11 @@ class ChatMethods {
         date: date,
         time: time,
       ).toMap());
+
       await _firebaseFirestore
           .collection("chats")
           .doc(chatId1)
           .update({"messages": messages});
-
       await _firebaseFirestore
           .collection("chats")
           .doc(chatId2)

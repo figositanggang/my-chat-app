@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:my_chat_app/firebase/firebase_authentication_helper.dart';
+import 'package:my_chat_app/main.dart';
 import 'package:my_chat_app/resources/my_theme.dart';
+import 'package:my_chat_app/screen/login_screen.dart';
 import 'package:my_chat_app/widgets/my_text_button.dart';
 import 'package:my_chat_app/widgets/my_text_field.dart';
 
@@ -77,8 +79,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                context, "/", (route) => false),
+            onPressed: () => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AuthChanges(),
+                ),
+                (route) => false),
             icon: Icon(Icons.close),
           ),
         ],
@@ -194,7 +200,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 style: TextStyle(color: lightBlue),
                               ),
                               onTap: () {
-                                Navigator.pushNamed(context, "login");
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoginScreen(),
+                                    ));
                               },
                             ),
                           ],

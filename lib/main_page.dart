@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:my_chat_app/models/user_model.dart';
 import 'package:my_chat_app/screen/chatting_screen.dart';
+import 'package:my_chat_app/screen/profile%20screen/profile_screen.dart';
 
 import 'package:my_chat_app/widgets/chat_list_tile.dart';
 import 'package:my_chat_app/widgets/my_loading.dart';
@@ -63,7 +64,12 @@ class _MainPageState extends State<MainPage> {
               },
             ),
             onPressed: () {
-              Navigator.pushNamed(context, "profile");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(),
+                ),
+              );
             },
           ),
         ],

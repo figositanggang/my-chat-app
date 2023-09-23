@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:my_chat_app/main.dart';
 import 'package:my_chat_app/models/user_model.dart';
 
 class FirebaseAuthenticationHelper {
@@ -61,7 +63,14 @@ class FirebaseAuthenticationHelper {
   }
 
   // Sign Out
-  static Future<void> signOut() async {
+  static Future<void> signOut(BuildContext context) async {
     await _firebaseAuth.signOut();
+
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AuthChanges(),
+        ),
+        (route) => false);
   }
 }

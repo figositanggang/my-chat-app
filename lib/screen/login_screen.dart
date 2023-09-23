@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_chat_app/firebase/firebase_authentication_helper.dart';
 import 'package:my_chat_app/main.dart';
-import 'package:my_chat_app/main_page.dart';
 import 'package:my_chat_app/resources/my_theme.dart';
 import 'package:my_chat_app/screen/register_screen.dart';
 import 'package:my_chat_app/widgets/my_text_button.dart';
@@ -57,9 +56,12 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Login Berhasil")));
 
-      try {
-        Navigator.pushNamedAndRemoveUntil(context, "home", (route) => false);
-      } catch (e) {}
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AuthChanges(),
+          ),
+          (route) => false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res)));
     }
@@ -73,8 +75,12 @@ class _LoginScreenState extends State<LoginScreen> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                context, "/", (route) => false),
+            onPressed: () => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AuthChanges(),
+                ),
+                (route) => false),
             icon: Icon(Icons.close),
           ),
         ],
@@ -165,7 +171,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 style: TextStyle(color: lightBlue),
                               ),
                               onTap: () {
-                                Navigator.pushNamed(context, "register");
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => RegisterScreen(),
+                                    ));
                               },
                             ),
                           ],

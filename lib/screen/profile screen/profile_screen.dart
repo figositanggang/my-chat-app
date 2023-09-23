@@ -1,15 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:my_chat_app/firebase/firebase_authentication_helper.dart';
-import 'package:my_chat_app/firebase/firebase_firestore_helper.dart';
 import 'package:my_chat_app/firebase/firebase_storage_helper.dart';
 import 'package:my_chat_app/models/user_model.dart';
 import 'package:my_chat_app/resources/my_theme.dart';
-import 'package:my_chat_app/screen/login_screen.dart';
+import 'package:my_chat_app/screen/profile%20screen/ubah_data_screen.dart';
 import 'package:my_chat_app/screen/welcome_screen.dart';
 import 'package:my_chat_app/widgets/my_text_button.dart';
 
@@ -35,6 +33,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .snapshots();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   // Sign Out
   signOut() async {
     showDialog(
@@ -47,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Text("Ya"),
               tooltip: "Keluar",
               onPressed: () {
-                FirebaseAuthenticationHelper.signOut().then(
+                FirebaseAuthenticationHelper.signOut(context).then(
                   (value) async {
                     await Future.delayed(Duration(seconds: 1));
 
@@ -57,8 +60,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     );
 
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, "welcome", (route) => false);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WelcomeScreen(),
+                        ),
+                        (route) => false);
                   },
                 );
               },
@@ -237,7 +244,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: _Item(
                       leading: Icon(Icons.edit, color: lightBlue),
                       title: Text("Ubah Data"),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UbahDataScreen(
+                              user: user,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
 

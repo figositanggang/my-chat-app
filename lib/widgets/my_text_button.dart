@@ -38,7 +38,8 @@ class MyButton extends StatelessWidget {
         onPressed: onPressed,
         child: child,
         style: ElevatedButton.styleFrom(
-          padding: padding ?? EdgeInsets.all(10),
+          padding:
+              padding ?? EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           backgroundColor: bgColor ?? blue,
           shape:
               border ?? RoundedRectangleBorder(borderRadius: BorderRadius.zero),

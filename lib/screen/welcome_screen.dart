@@ -30,7 +30,11 @@ class WelcomeScreen extends StatelessWidget {
                 children: [
                   MyButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, "login");
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ));
                     },
                     child: Center(child: Text("Masuk")),
                     tooltip: "Masuk",
@@ -39,7 +43,11 @@ class WelcomeScreen extends StatelessWidget {
                   SizedBox(height: 5),
                   MyButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, "register");
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RegisterScreen(),
+                          ));
                     },
                     child: Center(child: Text("Daftar")),
                     tooltip: "Daftar",
