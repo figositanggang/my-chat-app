@@ -11,6 +11,7 @@ ThemeData darkTheme = ThemeData(
   scaffoldBackgroundColor: scaffoldBackgroundColor,
   splashColor: Colors.transparent,
   highlightColor: lightBlue.withOpacity(.1),
+  brightness: Brightness.dark,
 
   // App Bar Theme
   appBarTheme: AppBarTheme(

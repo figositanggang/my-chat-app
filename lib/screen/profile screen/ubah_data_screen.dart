@@ -1,31 +1,35 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_chat_app/firebase/firebase_authentication_helper.dart';
-import 'package:my_chat_app/models/user_model.dart';
 import 'package:my_chat_app/widgets/my_loading.dart';
 import 'package:my_chat_app/widgets/my_text_button.dart';
 import 'package:my_chat_app/widgets/my_text_field.dart';
 
 class UbahDataScreen extends StatefulWidget {
-  final UserModel user;
-  const UbahDataScreen({super.key, required this.user});
+  final String title;
+  final String value;
+  const UbahDataScreen({
+    super.key,
+    required this.title,
+    required this.value,
+  });
 
   @override
   State<UbahDataScreen> createState() => _UbahDataScreenState();
 }
 
 class _UbahDataScreenState extends State<UbahDataScreen> {
-  TextEditingController email = TextEditingController();
-  TextEditingController username = TextEditingController();
-  TextEditingController name = TextEditingController();
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
+  TextEditingController controller = TextEditingController();
+
   final currentUser = FirebaseAuth.instance.currentUser!;
 
   final key = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final user = widget.user;
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Ubah Data"),
@@ -43,9 +47,9 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
                   children: [
                     // Email
                     ListTile(
-                      title: Text("Email"),
+                      title: Text(widget.title),
                       subtitle: MyTextField(
-                        hint: user.email,
+                        hint: widget.value,
                         obscureText: false,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -54,25 +58,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
 
                           return null;
                         },
-                        controller: email,
-                      ),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-
-                    // Username
-                    ListTile(
-                      title: Text("Username"),
-                      subtitle: MyTextField(
-                        hint: user.username,
-                        obscureText: false,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Tidak boleh kosong...";
-                          }
-
-                          return null;
-                        },
-                        controller: username,
+                        controller: controller,
                       ),
                       contentPadding: EdgeInsets.zero,
                     ),
@@ -83,7 +69,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
                       child: MyButton(
                         onPressed: () {
                           if (key.currentState!.validate()) {
-                            ubahData();
+                            ubahData(widget.title);
                           }
                         },
                         child: Text("Ubah"),
@@ -102,7 +88,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
     );
   }
 
-  ubahData() async {
+  ubahData(String key) async {
     String res = '';
     showDialog(
       context: context,
@@ -113,8 +99,21 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
     );
 
     try {
-      await currentUser.updateEmail(email.text);
-      await FirebaseAuthenticationHelper.signOut(context);
+      if (key == "Email") {
+        await currentUser.updateEmail(controller.text);
+        await firebaseFirestore
+            .collection("users")
+            .doc(currentUser.uid)
+            .update({"email": controller.text});
+        await FirebaseAuthenticationHelper.signOut(context);
+      } else {
+        await firebaseFirestore
+            .collection("users")
+            .doc(currentUser.uid)
+            .update({key.toLowerCase(): controller.text});
+
+        Navigator.pop(context);
+      }
 
       res = 'success';
     } on FirebaseAuthException catch (_) {

@@ -10,27 +10,25 @@ class FirebaseStorageHelper {
 
   // Pick Image
   static Future<void> pickImage({
-    required TargetPlatform platform,
+    ImageSource? source,
     required String currentUserId,
   }) async {
     late Reference ref;
 
     ImagePicker picker = ImagePicker();
-    XFile? webImage;
+    XFile? image;
 
-    if (kIsWeb) {
-      webImage = await picker.pickImage(source: ImageSource.gallery);
+    image = await picker.pickImage(source: source ?? ImageSource.gallery);
 
-      if (webImage != null) {
-        String imageName = "${currentUserId}-profilePicture";
-        ref = FirebaseStorage.instance.ref("Profile pictures").child(imageName);
+    if (image != null) {
+      String imageName = "${currentUserId}-profilePicture";
+      ref = FirebaseStorage.instance.ref("Profile pictures").child(imageName);
 
-        uploadImage(
-          ref: ref,
-          webImage: webImage,
-          currentUserId: currentUserId,
-        );
-      }
+      uploadImage(
+        ref: ref,
+        webImage: image,
+        currentUserId: currentUserId,
+      );
     }
   }
 
@@ -40,24 +38,22 @@ class FirebaseStorageHelper {
     required XFile webImage,
     required String currentUserId,
   }) async {
-    if (kIsWeb) {
-      try {
-        Uint8List imageBytes = await webImage.readAsBytes();
-        TaskSnapshot taskSnapshot = await ref.putData(imageBytes);
+    try {
+      Uint8List imageBytes = await webImage.readAsBytes();
+      TaskSnapshot taskSnapshot = await ref.putData(imageBytes);
 
-        if (taskSnapshot.state == TaskState.success) {
-          String photoUrl = await taskSnapshot.ref.getDownloadURL();
+      if (taskSnapshot.state == TaskState.success) {
+        String photoUrl = await taskSnapshot.ref.getDownloadURL();
 
-          await FirebaseFirestoreHelper.updatePhotoUrl(
-            currentUserId: currentUserId,
-            photoUrl: photoUrl,
-          );
+        await FirebaseFirestoreHelper.updatePhotoUrl(
+          currentUserId: currentUserId,
+          photoUrl: photoUrl,
+        );
 
-          print("Berhasil Upload");
-        }
-      } on FirebaseAuthException catch (e) {
-        print("ERROOOOOOR: $e");
+        print("Berhasil Upload");
       }
+    } on FirebaseAuthException catch (e) {
+      print("ERROOOOOOR: $e");
     }
   }
 }

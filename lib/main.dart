@@ -3,16 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:my_chat_app/firebase_options.dart';
 import 'package:my_chat_app/provider/chatting_screen_provider.dart';
-import 'package:my_chat_app/screen/profile%20screen/profile_screen.dart';
-import 'package:my_chat_app/screen/register_screen.dart';
-import 'package:my_chat_app/screen/start_chat_screen.dart';
 import 'package:my_chat_app/screen/welcome_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:my_chat_app/main_page.dart';
 import 'package:my_chat_app/provider/profile_screen_provider.dart';
 import 'package:my_chat_app/provider/start_chat_screen_provider.dart';
 import 'package:my_chat_app/resources/my_theme.dart';
-import 'package:my_chat_app/screen/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,11 +32,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Fun App',
       darkTheme: darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
       home: AuthChanges(),
     );
   }

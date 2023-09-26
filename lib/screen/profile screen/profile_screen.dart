@@ -81,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: scaffoldBackgroundColor.withOpacity(.5),
+        backgroundColor: scaffoldBackgroundColor.withOpacity(.1),
         elevation: 0,
         title: Text("Pengaturan"),
       ),
@@ -199,7 +199,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
 
                     await FirebaseStorageHelper.pickImage(
-                      platform: Theme.of(context).platform,
                       currentUserId: currentUser.uid,
                     );
 
@@ -222,9 +221,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _Title("Akun"),
-                  _Item(title: Text(user.email), subtitle: Text("email")),
-                  _Item(title: Text(user.username), subtitle: Text("username")),
-                  _Item(title: Text(user.name), subtitle: Text("name")),
+                  _Item(
+                    title: Text(user.email),
+                    subtitle: Text("email"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UbahDataScreen(
+                            title: "Email",
+                            value: user.email,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  _Item(
+                    title: Text(user.username),
+                    subtitle: Text("username"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UbahDataScreen(
+                            title: "Username",
+                            value: user.username,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  _Item(
+                    title: Text(user.name),
+                    subtitle: Text("name"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UbahDataScreen(
+                            title: "Name",
+                            value: user.name,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -237,25 +278,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _Title("Pengaturan"),
-
-                  // Ubah Data
-                  Tooltip(
-                    message: "Ubah Data",
-                    child: _Item(
-                      leading: Icon(Icons.edit, color: lightBlue),
-                      title: Text("Ubah Data"),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UbahDataScreen(
-                              user: user,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
 
                   // Keluar
                   Tooltip(

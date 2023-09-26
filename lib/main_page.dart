@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:my_chat_app/models/user_model.dart';
 import 'package:my_chat_app/screen/chatting_screen.dart';
 import 'package:my_chat_app/screen/profile%20screen/profile_screen.dart';
+import 'package:my_chat_app/screen/start_chat_screen.dart';
 
 import 'package:my_chat_app/widgets/chat_list_tile.dart';
 import 'package:my_chat_app/widgets/my_loading.dart';
@@ -46,19 +47,15 @@ class _MainPageState extends State<MainPage> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Icon(Icons.circle_outlined);
+                  return Icon(Icons.circle);
                 } else {
-                  UserModel user = UserModel.fromSnap(snapshot.data!);
-
-                  if (snapshot.hasData && user.photoUrl.isNotEmpty) {
+                  if (snapshot.hasData) {
+                    var user = UserModel.fromSnap(snapshot.data!);
                     return CircleAvatar(
                       backgroundImage: NetworkImage(user.photoUrl),
                     );
                   } else {
-                    return CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          "https://upload.wikimedia.org/wikipedia/id/a/a3/JKT48_High_Tension_Cover.jpg"),
-                    );
+                    return Icon(Icons.circle);
                   }
                 }
               },
@@ -113,7 +110,8 @@ class _MainPageState extends State<MainPage> {
         child: Icon(Icons.add),
         tooltip: "Tambah teman",
         onPressed: () {
-          Navigator.pushNamed(context, "start-chat");
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => StartChatScreen()));
         },
       ),
     );
